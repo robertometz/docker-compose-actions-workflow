@@ -11,17 +11,20 @@ jobs:
         run: docker-compose -f docker-compose.yml -f docker-compose.selenium.yml up -d
       - name: Docker ps
         run: docker ps
-      - name: Wait for services start
+      - name: Pip install
         run: |
-          docker run --network container:web appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
-          docker run --network container:selenium appropriate/curl -s --retry 10 --retry-connrefused http://localhost:4444/
-          echo "App and Selenium containers are up and running"
-      - name: Run UI Tests
-        run: |
-          pip install wheel
+          python -m pip install --upgrade pip
+          pip install --upgrade wheel setuptools tox
+          pip install wait-for-it
           pip install selenium
           pip install pytest
-          pytest
+      - name: Wait for services start
+        run: |
+          # docker run --network container:web appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
+          # docker run --network container:selenium appropriate/curl -s --retry 10 --retry-connrefused http://localhost:4444/
+          echo "App and Selenium containers are up and running"
+      - name: Run UI Tests
+        run: pytest
       - name: Docker down
         run: docker-compose -f docker-compose.yml -f docker-compose.selenium.yml down
       - name: Docker ps
