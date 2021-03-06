@@ -5,7 +5,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the stack
-        run: docker-compose up -d
-      - name: Test
-        run: docker ps & docker run --network container:webapp-frontend appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
+      - name: Build
+        run: docker-compose build
+      - name: Pip
+        run: pip install selenium pytest wait-for-it
+      - name: Docker up
+        run: docker-compose -f docker-compose.yml -f docker-compose.selenium.yml up -d
+      - name: Docker ps
+        run: docker ps        
+      - name: Wait for services up
+        run: wait-for-it --service localhost:5000 --service localhost:4444 --service localhost:5555 -- echo "App and Selenium are up and running"
+      - name: Run UI Tests
+        run: pytest
+      - name: Docker down
+        run: docker-compose -f docker-compose.yml -f docker-compose.selenium.yml down
+      - name: Docker ps
+        run: docker ps
+
+# Install act
+# curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+# act --platform ubuntu-latest=lucasalt/act_base:latest
