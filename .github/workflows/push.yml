@@ -13,9 +13,12 @@ jobs:
         run: docker ps
       - name: Wait for services start
         run: |
-          pip install wheel
-          pip install wait-for-it
-          wait-for-it --service localhost:5000 --service localhost:4444 --service localhost:5555 -- echo "App and Selenium are up and running"
+          docker run --network container:web appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5000/
+          docker run --network container:selenium appropriate/curl -s --retry 10 --retry-connrefused http://localhost:4444/
+          docker run --network container:chrome appropriate/curl -s --retry 10 --retry-connrefused http://localhost:5555/
+          echo ""
+          echo "App and Selenium containers are up and running"
+          echo ""
       - name: Run UI Tests
         run: |
           pip install selenium
