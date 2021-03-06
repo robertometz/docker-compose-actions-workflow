@@ -8,15 +8,16 @@ jobs:
       - name: Build
         run: docker-compose build
       - name: Pip
-        run: pip install selenium pytest
+        run: | 
+          pip install wheel
+          pip install selenium
+          pip install pytest
       - name: Docker up
         run: docker-compose -f docker-compose.yml -f docker-compose.selenium.yml up -d
       - name: Docker ps
         run: docker ps
       - name: Wait for services up
-        run: |
-          pip install wait-for-it
-          wait-for-it --service localhost:5000 --service localhost:4444 --service localhost:5555 -- echo "App and Selenium are up and running"
+        run: wait-for-it --service localhost:5000 --service localhost:4444 --service localhost:5555 -- echo "App and Selenium are up and running"
       - name: Run UI Tests
         run: pytest
       - name: Docker down
