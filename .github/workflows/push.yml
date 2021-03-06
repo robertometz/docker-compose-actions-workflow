@@ -18,6 +18,7 @@ jobs:
           echo "App and Selenium containers are up and running"
       - name: Run UI Tests
         run: |
+          pip install wheel
           pip install selenium
           pip install pytest
           pytest
