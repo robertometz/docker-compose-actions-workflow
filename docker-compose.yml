@@ -1,10 +1,17 @@
 version: '3'
 services:
   web:
-    container_name: webapp-frontend
+    container_name: web
+    networks:
+      testnet: {}
     build: .
     ports:
       - "5000:5000"
   redis:
-    container_name: redis-backend
+    container_name: redis
+    networks:
+      testnet: {}    
     image: "redis:alpine"
+
+networks:
+  testnet:    

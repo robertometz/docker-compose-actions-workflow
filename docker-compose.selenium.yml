@@ -1,0 +1,58 @@
+version: '3'
+services:
+
+  selenium:
+    container_name: selenium  
+    image: selenium/hub
+    networks:
+      testnet: {}    
+    ports:
+      - "4444:4444"
+
+  firefox:
+    container_name: firefox
+    image: selenium/node-firefox
+    networks:
+      testnet: {}
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=selenium
+      - HUB_PORT_4444_TCP_PORT=4444
+
+  chrome:
+    container_name: chrome
+    image: selenium/node-chrome
+    networks:
+      testnet: {}
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=selenium
+      - HUB_PORT_4444_TCP_PORT=4444
+    ports:
+      - "5555:5555"      
+
+networks:
+  testnet:
+
+
+#   app:
+#     build: app/.
+#     networks:
+#       robottestsnw: {}
+#     ports:
+#       - "80"
+
+#   robottests:
+#     networks:
+#       robottestsnw: {}
+#     command: testui/wait-for-it.sh -t 15 chromenode:5555 -- robot -d reports --variablefile variables/config.py --variable BROWSER:chrome tests/
+#     depends_on:
+#       - selenium_hub
+#       - chromenode
+#       - firefoxnode
+#       - app
+#     build: testui/.
+#     volumes:
+#       - {WORKSPACE}/reports:/frontend-integration-tests/reports
+
+# networks:
+#   robottestsnw:
+#     driver: bridge
